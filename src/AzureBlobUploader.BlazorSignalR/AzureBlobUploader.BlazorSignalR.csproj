@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>20a403ed-c189-479d-93fb-4fde49334e3f</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AzureBlobUploader.Application\AzureBlobUploader.Application.csproj" />
+    <ProjectReference Include="..\AzureBlobUploader.Domain\AzureBlobUploader.Domain.csproj" />
+    <ProjectReference Include="..\AzureBlobUploader.Infrastructure\AzureBlobUploader.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\" />
+  </ItemGroup>
+
+</Project>

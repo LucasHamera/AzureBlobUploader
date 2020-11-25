@@ -1,0 +1,53 @@
+﻿@page "/"
+@using AzureBlobUploader.Domain.Entities
+@using AzureBlobUploader.Application.Services
+
+@inject IImageListRequester ImageListRequester
+@inject IImageUploader ImageUploader
+
+<InputFile OnChange="UploadFiles" multiple />
+
+<br/>
+
+@foreach (var image in _images)
+{
+    <img width="400" height="400" src="@image.Address" alt="@image.Name"/><br/>
+}
+
+@code {
+
+    private const string ImageContentTypePrefix = "image";
+    private const int MaxImageWidth = 1024;
+    private const int MaxImageHeight = 1024;
+
+    private readonly List<Image> _images = new List<Image>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await foreach (var image in ImageListRequester.Get())
+        {
+            _images.Add(image);
+        }
+    }
+
+
+    private async Task UploadFiles(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            if (!file.ContentType.StartsWith(ImageContentTypePrefix))
+                continue;
+
+            var image = await file.RequestImageFileAsync(file.ContentType, MaxImageWidth, MaxImageHeight);
+            await using var imageStream = file.OpenReadStream();
+
+            var uploadedImage = await ImageUploader.UploadAsync(
+                imageStream,
+                file.Name
+                );
+            _images.Add(uploadedImage);
+        }
+    }
+}
